@@ -2,7 +2,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # ១. ដាក់លេខ Token ដែលអ្នកបានពី BotFather នៅទីនេះ
-TOKEN = '7836805540:AAFZFfe3HJz647PKFwaWXncfTOiBghKD44Y'
+TOKEN = '7836805540:AAHas1bjSrKk7OJAUnHnmdK_uS8qm18Jq74'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # រូបភាព (Link រូបភាព ឬ File ID)
