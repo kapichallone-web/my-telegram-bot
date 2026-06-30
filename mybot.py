@@ -1,44 +1,131 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import (
+    Update,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+)
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters,
+)
 
-# ១. ដាក់លេខ Token ដែលអ្នកបានពី BotFather នៅទីនេះ
-TOKEN = '7836805540:AAHas1bjSrKk7OJAUnHnmdK_uS8qm18Jq74'
+TOKEN = "8829434059:AAE0bL50Yr-pSM20mPTVpMuN5OHA-1nvkA0"
 
+
+# /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # រូបភាព (Link រូបភាព ឬ File ID)
-    photo_url = "https://i.postimg.cc/BvvJywph/1.png" 
-    
-    # អត្ថបទស្វាគមន៍ (ដូចក្នុងរូបភាពរបស់អ្នក)
-    welcome_text = (
-        "J8BET ឧត្តមភាពក្នុងការផ្តល់សេវាកូនអតិថិជន 24/365\n"
-        "ផ្តល់ជូនសេវាកម្មដោយបុគ្គលិកដែលមានវិជ្ជាជីវៈ រហ័ស...\n\n"
-        "ចុះឈ្មោះថ្ងៃនេះទទួលបានទឹកប្រាក់ $8 ភ្លាមៗ"
-    )
 
-    # បង្កើតប៊ូតុង (Buttons)
-    keyboard = [
-        [InlineKeyboardButton("ចុះឈ្មោះឥតគិតថ្លៃឡូវនេះ 📝", url="https://t.me/j8bet_live01")],
-        [InlineKeyboardButton("ដោះស្រាយបញ្ហាប្រើប្រាស់អតិថិជន 📞", url="https://t.me/j8bet_live01")]
+    # Reply Keyboard
+    reply_keyboard = [
+        [KeyboardButton("📥 បង្កើតអាខោន")],
+        [KeyboardButton("📞 ទំនាក់ទំនង")],
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
-    # ផ្ញើរូបភាពជាមួយអត្ថបទ និងប៊ូតុង
-    await update.message.reply_photo(
-        photo=photo_url,
-        caption=welcome_text,
-        reply_markup=reply_markup
+    reply_markup = ReplyKeyboardMarkup(
+        reply_keyboard,
+        resize_keyboard=True
     )
+
+    # Inline Buttons
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(
+                "📝 ចុះឈ្មោះឥតគិតថ្លៃ",
+                url="https://t.me/F7_service",
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                "📞 ទំនាក់ទំនងផ្នែកបម្រើអតិថិជន",
+                url="https://t.me/F7_service",
+            )
+        ],
+    ]
+
+    inline_markup = InlineKeyboardMarkup(inline_keyboard)
+
+    text = (
+        "🎉 សូមស្វាគមន៍មកកាន់ F7 Service\n\n"
+        "✅ ផ្តល់សេវាកម្ម 24/365\n"
+        "✅ បុគ្គលិករហ័ស និងមានវិជ្ជាជីវៈ\n"
+        "✅ គាំទ្រអតិថិជនគ្រប់ពេល\n\n"
+        "សូមជ្រើសរើសប៊ូតុងខាងក្រោម 👇"
+    )
+
+    await update.message.reply_text(
+        text=text,
+        reply_markup=inline_markup,
+    )
+
+    await update.message.reply_text(
+        "📌 ឬជ្រើសរើស Menu ខាងក្រោម",
+        reply_markup=reply_markup,
+    )
+
+
+# Handle Buttons
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    text = update.message.text
+
+    if text == "📥 បង្កើតអាខោន":
+
+        keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "👉 បង្កើតអាខោន",
+                        url="https://t.me/F7_service",
+                    )
+                ]
+            ]
+        )
+
+        await update.message.reply_text(
+            "ចុចប៊ូតុងខាងក្រោមដើម្បីបង្កើតអាខោន",
+            reply_markup=keyboard,
+        )
+
+    elif text == "📞 ទំនាក់ទំនង":
+
+        keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "👉 ទំនាក់ទំនង",
+                        url="https://t.me/F7_service",
+                    )
+                ]
+            ]
+        )
+
+        await update.message.reply_text(
+            "ចុចប៊ូតុងខាងក្រោមដើម្បីទំនាក់ទំនង",
+            reply_markup=keyboard,
+        )
+
 
 def main():
-    # បង្កើត Application
-    application = Application.builder().token(TOKEN).build()
 
-    # នៅពេលអ្នកប្រើចុច /start
-    application.add_handler(CommandHandler("start", start))
+    app = Application.builder().token(TOKEN).build()
 
-    # ដំណើរការ Bot
-    print("Bot កំពុងដើរ...")
-    application.run_polling()
+    app.add_handler(CommandHandler("start", start))
 
-if __name__ == '__main__':
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            handle_message,
+        )
+    )
+
+    print("Bot is running...")
+
+    app.run_polling()
+
+
+if __name__ == "__main__":
     main()
